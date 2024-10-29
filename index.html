@@ -44,6 +44,43 @@
             align-items: center;
             gap: 10px;
         }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        #resultsTable {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #resultsTable th, #resultsTable td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        :root {
+            --table-header-bg: #f8f9fa; /* Light theme background for table header */
+            --table-header-color: #000; /* Light theme text color for table header */
+        }
+
+        [data-bs-theme="dark"] {
+            --table-header-bg: #343a40; /* Dark theme background for table header */
+            --table-header-color: #fff; /* Dark theme text color for table header */
+        }
+
+        #resultsTable th {
+            background-color: var(--table-header-bg); /* Use variable for background */
+            color: var(--table-header-color); /* Use variable for text color */
+            font-weight: bold;
+        }
+        #resultsTable td {
+            word-wrap: break-word;
+        }
+        #resultsTable .final-recommendation {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     </style>
 </head>
 

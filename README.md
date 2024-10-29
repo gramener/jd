@@ -2,6 +2,9 @@
 
 This project is a web-based application designed to analyze resumes against a job description using AI-powered analysis. It helps in evaluating candidate matches based on skills, experience, and other relevant criteria.
 
+## Try It Out !
+[Live Demo](https://jd.straive.app/)
+
 ## Features
 
 - **File Upload**: Upload job descriptions and resumes in DOCX or PDF format.

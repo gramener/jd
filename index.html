@@ -44,18 +44,14 @@
             align-items: center;
             gap: 10px;
         }
-        .table-responsive {
-            overflow-x: auto;
-        }
-        #resultsTable {
-            border-collapse: collapse;
-            width: 100%;
-        }
         #resultsTable th, #resultsTable td {
             padding: 15px;
             text-align: left;
             border: 1px solid #ddd;
             vertical-align: top;
+            overflow: hidden; 
+            width: 150px;
+            word-wrap: break-word;
         }
         :root {
             --table-header-bg: #f8f9fa; /* Light theme background for table header */
@@ -74,13 +70,17 @@
         }
         #resultsTable td {
             word-wrap: break-word;
+            max-height: 100px;
+        } 
+        .table-responsive {
+            overflow-x: auto; /* Enables horizontal scrolling */
+            width: 100%; /* Full width of the container */
         }
-        #resultsTable .final-recommendation {
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        #resultsTable {
+            width: 100%; /* Full width of the table */
+            table-layout: fixed; /* Fixed layout for precise column widths */
         }
+                
     </style>
 </head>
 
@@ -115,7 +115,6 @@
             <p>This tool leverages <strong>LLM</strong> to evaluate the <strong>compatibility</strong> of candidates with the job requirements.</p>
             <p>Get insights into <strong>skills</strong> and <strong>experience</strong> to make informed hiring decisions.</p>
         </div>
-
         <!-- File Upload Section -->
         <div class="row mb-4">
             <div class="col-md-6">
@@ -165,6 +164,11 @@
             <label for="additionalInstructions" class="form-label">Additional Instructions</label>
             <textarea id="additionalInstructions" class="form-control" rows="3"></textarea>
         </div>
+        <div class="mt-3 text-end">
+            <button id="downloadCSV" class="btn btn-success" style="display: none; margin-bottom: 10px;">
+                <i class="bi bi-download"></i> Download Results as CSV
+            </button>
+        </div>
 
         <!-- Results Table -->
         <div class="table-responsive">
@@ -206,12 +210,6 @@
                     <p id="bestMatchContent" class="mb-0"></p>
                 </div>
             </div>
-        </div>
-
-        <div class="mt-3">
-            <button id="downloadCSV" class="btn btn-success" style="display: none;">
-                <i class="bi bi-download"></i> Download Results as CSV
-            </button>
         </div>
     </div>
 

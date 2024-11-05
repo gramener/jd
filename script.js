@@ -566,6 +566,19 @@ document.getElementById("clearDataButton").addEventListener("click", function() 
       // Clear the resumes input
       document.getElementById('resumeFiles').value = '';
       alert("Resumes cleared.");
+    } else if (selectedOption.value === 'both') {
+      // Clear the job description input
+      document.getElementById('jdFile').value = '';
+      // Clear the resumes input
+      document.getElementById('resumeFiles').value = '';
+      // Clear the mandatory skills section
+      document.getElementById("mandatorySkills").innerHTML = ""; // Clear AI suggested skills
+      // Clear the results table
+      document.getElementById("resultsBody").innerHTML = ""; // Clear results table
+      // Hide the results table and download button
+      document.getElementById("resultsTable").classList.add("d-none"); // Hide results table
+      document.getElementById("downloadCSV").style.display = "none"; // Hide download button
+      alert("Job Description, Resumes, and Results cleared.");
     }
     // Hide the clear data section after clearing
     toggleClearDataSection();

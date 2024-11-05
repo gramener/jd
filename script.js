@@ -16,8 +16,8 @@ const readFile = {
     },
     pdf: async function (file) {
         if (!pdfjs) {
-            pdfjs = await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@4/+esm");
-            pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4/build/pdf.worker.min.mjs";
+            pdfjs = await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7/+esm");
+            pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7/build/pdf.worker.min.mjs";
         }
         const data = await file.arrayBuffer();
         let textContent;
@@ -41,7 +41,7 @@ const readFile = {
 document.getElementById('uploadJD').addEventListener('click', async function () {
     const jdFile = document.getElementById('jdFile').files[0];
     const jdLoadingSpinner = document.getElementById('jdLoadingSpinner');
-    
+
     if (!jdFile) {
         alert("Please upload a Job Description file.");
         return;
@@ -59,12 +59,12 @@ document.getElementById('uploadJD').addEventListener('click', async function () 
         } else {
             jobDescription = await readFile.default(jdFile);
         }
-        
+
         const mandatorySkills = await getMandatorySkillsFromJD(jobDescription.data);
         displayMandatorySkills(mandatorySkills);
         window.jobDescription = jobDescription.data; // Store job description globally for later use
         window.mandatorySkills = mandatorySkills; // store mandatory skills globally
-        
+
     } catch (error) {
         console.error("Error processing Job Description:", error);
         alert("An error occurred while processing the Job Description. Please try again.");
@@ -80,40 +80,45 @@ async function extractInformation(resumeFileName, resumeText, mandatorySkills, o
         throw new TypeError("Expected 'mandatorySkills' to be an object");
     }
 
-    let prompt = 
-        `You are an AI engine tasked with analyzing a provided "Job Description" (JD) and comparing it against a "Resume" to extract and match relevant information. Your goal is to evaluate the resume against the job requirements and skills.\n\n` +
-        `Task Content:\n` +
-        `1. Job Description Analysis:\n` +
-        `   Carefully review the "Job Description" to understand the role, responsibilities, and the required skills and experience.\n\n` +
-        `2. Resume Analysis:\n` +
-        `   Examine the "Resume Text" to assess the candidate's skills, experience, and qualifications.\n\n` +
-        `3. Comparison and Matching:\n` +
-        `   Compare the skills and experience from the resume against the requirements listed in the JD.\n` +
-        `   If there are mandatory skills with weightages provided, check whether the resume contains those skills and assess them accordingly.\n` +
-        `   Consider any additional skills mentioned in the JD and evaluate whether the resume reflects those skills.\n\n` +
-        `4. Recommendation:\n` +
-        `   Based on your analysis, provide a final assessment on how well the resume matches the JD.\n` +
-        `   Do not leave any required fields unanswered. Ensure all requested information is provided without deviating from the context.\n\n` +
-        `5. Note:\n` +
-        `   Ensure that the analysis is thorough, relevant, and concise. Avoid generating text that is unrelated or unnecessary for the task.\n` +
-        `   Do not generate information that is not given in the resume and provide reasons where required.\n` +
-        `   If there is no information available for the required parameter then return "N/A".\n\n` +
-        `output JSON:\n` +
-        `{ "Candidate Name": "Candiate Name from Resume Text", 
-            "Phone No.": "Phone number Candiate Name from Resume Text",
-            "Email": "Email Candiate Name from Resume Text",
-            "Relevant Experience in years (w.r.t JD)": "Get the relevant experience",
-            "Overall Exp in years": "Get the overall experience",
-            "Overall Fit Score (1/10) (w.r.t JD)": {score, Reason for Overall Fit Score},
-            "Mandatory Skills Score (1/10)": {
-                    "Mandatoy skill 1": score, Reason for given score on Mandatoy skill 1
-                    "Mandatoy skill 2": score, Reason for given score on Mandatoy skill 2
-                    "Mandatoy skill 3": score, Reason for given score on Mandatoy skill 3
-                    "Mandatoy skill 4": score, Reason for given score on Mandatoy skill 4
-                    "Mandatoy skill 5": score, Reason for given score on Mandatoy skill 5},
-            "Domain Knowledge (1 to 10) (w.r.t JD)": {score, Reason for Domain Knowledge"},
-            "Final Recommendation": {'Give the Final recommendation'}
-        }\n\n` 
+    let prompt = `
+You are an AI engine tasked with analyzing a provided "Job Description" (JD) and comparing it against a "Resume" to extract and match relevant information. Your goal is to evaluate the resume against the job requirements and skills.
+
+Task Content:
+1. Job Description Analysis:
+   Carefully review the "Job Description" to understand the role, responsibilities, and the required skills and experience.
+2. Resume Analysis:
+   Examine the "Resume Text" to assess the candidate's skills, experience, and qualifications.\n
+3. Comparison and Matching:
+   Compare the skills and experience from the resume against the requirements listed in the JD.
+   If there are mandatory skills with weightages provided, check whether the resume contains those skills and assess them accordingly.
+   Consider any additional skills mentioned in the JD and evaluate whether the resume reflects those skills.\n
+4. Recommendation:
+   Based on your analysis, provide a final assessment on how well the resume matches the JD.
+   Do not leave any required fields unanswered. Ensure all requested information is provided without deviating from the context.\n
+5. Note:
+   Ensure that the analysis is thorough, relevant, and concise. Avoid generating text that is unrelated or unnecessary for the task.
+   Do not generate information that is not given in the resume and provide reasons where required.
+   If there is no information available for the required parameter then return "N/A".
+
+Output JSON:
+{
+  "Candidate Name": "Candiate Name from Resume Text",
+  "Phone No.": "Phone number Candiate Name from Resume Text",
+  "Email": "Email Candiate Name from Resume Text",
+  "Relevant Experience in years (w.r.t JD)": "Get the relevant experience",
+  "Overall Exp in years": "Get the overall experience",
+  "Overall Fit Score (1/10) (w.r.t JD)": { "score": number, "Reason": text },
+  "Mandatory Skills Score (1/10)": {
+    "Mandatory skill 1": { "score": number, "Reason": text },
+    "Mandatory skill 2": { "score": number, "Reason": text },
+    "Mandatory skill 3": { "score": number, "Reason": text },
+    "Mandatory skill 4": { "score": number, "Reason": text },
+    "Mandatory skill 5": { "score": number, "Reason": text },
+  },
+  "Domain Knowledge (1 to 10) (w.r.t JD)": { "score": number, "Reason": text },
+  "Final Recommendation": "Give the Final recommendation",
+}
+`;
 
     prompt += `Job Description:\n${jobDescription}\n\n`;
     prompt += `Mandatory Skills and Weightages:\n`;
@@ -155,12 +160,12 @@ async function extractInformation(resumeFileName, resumeText, mandatorySkills, o
 // Helper function to safely calculate mandatory skills average
 function calculateMandatorySkillsAverage(skillsObj) {
     if (!skillsObj || typeof skillsObj !== 'object') return "N/A";
-    
+
     const scores = Object.values(skillsObj)
         .filter(score => typeof score === 'number');
-    
+
     if (scores.length === 0) return "N/A";
-    
+
     return (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2);
 }
 
@@ -192,15 +197,15 @@ async function getMandatorySkillsFromJD(jobDescription) {
         const errorDetails = await response.json();
         throw new Error(`Error: ${errorDetails.message || 'Failed to fetch skills'}`);
     }
-    
+
     const data = await response.json();
     let content = data.choices[0].message.content;
-    
+
     // Clean the response by removing markdown code blocks and any extra whitespace
     content = content.replace(/```json\n?/g, '')
                     .replace(/```\n?/g, '')
                     .trim();
-    
+
     try {
         const skillsData = JSON.parse(content);
         return skillsData.skills;
@@ -215,11 +220,11 @@ async function getMandatorySkillsFromJD(jobDescription) {
 function displayMandatorySkills(skills) {
     const skillsDiv = document.getElementById('mandatorySkills');
     skillsDiv.innerHTML = ''; // Clear existing content
-    
+
     if (skills.length > 0) {
         const table = document.createElement('table');
-        table.className = 'skills-table';
-        
+        table.classList.add('table', 'my-5');
+
         // Create table header
         const header = table.createTHead();
         const headerRow = header.insertRow();
@@ -228,16 +233,16 @@ function displayMandatorySkills(skills) {
             th.textContent = text;
             headerRow.appendChild(th);
         });
-        
+
         // Create table body
         const tbody = table.createTBody();
         skills.forEach((skill, index) => {
             const row = tbody.insertRow();
-            
+
             // AI Suggested Skill (read-only)
             const suggestionCell = row.insertCell();
             suggestionCell.textContent = `${skill.name} - ${skill.description}`;
-            
+
             // Custom Skill Input
             const customCell = row.insertCell();
             const customInput = document.createElement('input');
@@ -246,33 +251,33 @@ function displayMandatorySkills(skills) {
             customInput.value = skill.name;
             customInput.className = 'custom-skill-input';
             customCell.appendChild(customInput);
-            
+
             // Weightage Slider
             const weightageCell = row.insertCell();
             const weightageContainer = document.createElement('div');
             weightageContainer.className = 'weightage-container';
-            
+
             const weightageInput = document.createElement('input');
             weightageInput.type = 'range';
             weightageInput.min = '1';
             weightageInput.max = '10';
             weightageInput.value = '5';
             weightageInput.id = `weightage_${index}`;
-            
+
             const weightageValue = document.createElement('span');
             weightageValue.textContent = weightageInput.value;
             weightageValue.className = 'weightage-value';
-            
+
             weightageContainer.appendChild(weightageInput);
             weightageContainer.appendChild(weightageValue);
             weightageCell.appendChild(weightageContainer);
-            
+
             // Update weightage display
             weightageInput.addEventListener('input', function() {
                 weightageValue.textContent = this.value;
             });
         });
-        
+
         skillsDiv.appendChild(table);
     } else {
         skillsDiv.innerHTML = "<p class='no-skills'>No mandatory skills found.</p>";
@@ -284,7 +289,7 @@ async function getBestMatch(finalRecommendations, additionalInstructions = "") {
         additionalInstructions = "no additional instructions are given";
     }
 
-    const prompt = 
+    const prompt =
         `Here are the final recommendations:\n${finalRecommendations}\n\n` +
         `Additional Instructions:\n${additionalInstructions}\n\n` +
         `Identify the best candidate for the role and provide a concise statement with the candidate's name and key qualifications.`;
@@ -314,18 +319,18 @@ document.getElementById('getBestMatch').addEventListener('click', async function
     const additionalInstructions = document.getElementById('additionalInstructions').value;
     const bestMatchResult = document.getElementById('bestMatchResult');
     const bestMatchContent = document.getElementById('bestMatchContent');
-    
+
     try {
         // Show loading state
         this.disabled = true;
         this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Finding best match...';
-        
+
         const bestMatch = await getBestMatch(window.finalRecommendations, additionalInstructions);
-        
+
         // Display the result in the card
         bestMatchContent.textContent = bestMatch;
         bestMatchResult.style.display = 'block';
-        
+
     } catch (error) {
         console.error("Error finding best match:", error);
         alert("An error occurred while finding the best match. Please try again.");
@@ -359,7 +364,7 @@ document.getElementById('analyseButton').addEventListener('click', async functio
     const resultsTable = document.getElementById('resultsTable');
     const resultsBody = document.getElementById('resultsBody');
     const loadingSpinner = document.getElementById('loadingSpinner');
-    
+
     // Check if job description exists
     if (!window.jobDescription || !window.mandatorySkills) {
         alert("Please upload and process a Job Description first.");
@@ -406,14 +411,14 @@ document.getElementById('analyseButton').addEventListener('click', async functio
             try {
                 let contentStr = result.choices[0].message.content;
                 contentStr = contentStr.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-                const analysis = JSON.parse(contentStr.trim());             
-                
+                const analysis = JSON.parse(contentStr.trim());
+
                 // Add this after parsing the analysis
                 finalRecommendations.push({
                     name: analysis["Candidate Name"] || "N/A",
                     recommendation: analysis["Final Recommendation"] || "N/A"
                 });
-                
+
                 addResultRow({
                     name: analysis["Candidate Name"] || "N/A",
                     phone: analysis["Phone No."] || "N/A",
@@ -440,16 +445,16 @@ document.getElementById('analyseButton').addEventListener('click', async functio
                 }, resumeFile.name);
             }
         }
-        
+
         // Add this before showing the results table
-        window.finalRecommendations = finalRecommendations.map(r => 
+        window.finalRecommendations = finalRecommendations.map(r =>
             `Candidate: ${r.name}\nRecommendation: ${r.recommendation}`
         ).join('\n\n');
-        
+
         // Show the results table and download button
-        resultsTable.style.display = 'table';
+        resultsTable.classList.remove('d-none');
         document.getElementById('downloadCSV').style.display = 'inline-block';
-        
+
     } catch (error) {
         console.error("Error in resume analysis:", error);
         alert("An error occurred while analyzing the resumes. Please try again.");
@@ -463,14 +468,14 @@ document.getElementById('analyseButton').addEventListener('click', async functio
 function tableToCSV() {
     const table = document.getElementById('resultsTable');
     let csv = [];
-    
+
     // Get headers
     let headers = [];
     for(let cell of table.rows[0].cells) {
         headers.push(cell.textContent);
     }
     csv.push(headers.join(','));
-    
+
     // Get rows
     for(let row of table.rows) {
         if(row.rowIndex === 0) continue; // Skip header row
@@ -482,7 +487,7 @@ function tableToCSV() {
         }
         csv.push(rowData.join(','));
     }
-    
+
     return csv.join('\n');
 }
 
@@ -508,5 +513,3 @@ document.getElementById('downloadCSV').addEventListener('click', function() {
     const filename = 'resume_analysis_results_' + new Date().toISOString().slice(0,10) + '.csv';
     downloadCSV(csv, filename);
 });
-
-

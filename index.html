@@ -12,29 +12,6 @@
         .narrative {
             max-width: 40rem;
         }
-        #resultsTable {
-            display: none;
-        }
-        .loading-indicator {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 1000;
-        }
-        .skills-table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-        .skills-table th, .skills-table td {
-            padding: 10px;
-            border: 1px solid #ddd;
-        }
         .custom-skill-input {
             width: 100%;
             padding: 5px;
@@ -44,43 +21,6 @@
             align-items: center;
             gap: 10px;
         }
-        #resultsTable th, #resultsTable td {
-            padding: 15px;
-            text-align: left;
-            border: 1px solid #ddd;
-            vertical-align: top;
-            overflow: hidden; 
-            width: 150px;
-            word-wrap: break-word;
-        }
-        :root {
-            --table-header-bg: #f8f9fa; /* Light theme background for table header */
-            --table-header-color: #000; /* Light theme text color for table header */
-        }
-
-        [data-bs-theme="dark"] {
-            --table-header-bg: #343a40; /* Dark theme background for table header */
-            --table-header-color: #fff; /* Dark theme text color for table header */
-        }
-
-        #resultsTable th {
-            background-color: var(--table-header-bg); /* Use variable for background */
-            color: var(--table-header-color); /* Use variable for text color */
-            font-weight: bold;
-        }
-        #resultsTable td {
-            word-wrap: break-word;
-            max-height: 100px;
-        } 
-        .table-responsive {
-            overflow-x: auto; /* Enables horizontal scrolling */
-            width: 100%; /* Full width of the container */
-        }
-        #resultsTable {
-            width: 100%; /* Full width of the table */
-            table-layout: fixed; /* Fixed layout for precise column widths */
-        }
-                
     </style>
 </head>
 
@@ -150,12 +90,12 @@
         </div>
 
         <!-- Mandatory Skills Section -->
-        <div id="mandatorySkills" class="mb-4"></div>
+        <div id="mandatorySkills"></div>
 
         <!-- Optional Skills Section -->
         <div class="mb-4">
             <label for="optionalSkills" class="form-label">Optional Skills</label>
-            <textarea id="optionalSkills" class="form-control" rows="3" 
+            <textarea id="optionalSkills" class="form-control" rows="3"
                 placeholder="Enter optional skills, one per line"></textarea>
         </div>
 
@@ -169,10 +109,12 @@
                 <i class="bi bi-download"></i> Download Results as CSV
             </button>
         </div>
+    </div>
 
-        <!-- Results Table -->
+    <!-- Results Table -->
+    <div class="container-fluid">
         <div class="table-responsive">
-            <table id="resultsTable" class="table table-striped">
+            <table id="resultsTable" class="table table-striped d-none">
                 <thead>
                     <tr>
                         <th>Resume</th>
@@ -190,7 +132,9 @@
                 <tbody id="resultsBody"></tbody>
             </table>
         </div>
+    </div>
 
+    <div class="container">
         <!-- Add this after the results table -->
         <div id="loadingSpinner" class="text-center" style="display: none;">
             <div class="spinner-border text-primary" role="status">

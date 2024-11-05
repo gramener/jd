@@ -575,10 +575,13 @@ document.getElementById("clearDataButton").addEventListener("click", function() 
       document.getElementById("mandatorySkills").innerHTML = ""; // Clear AI suggested skills
       // Clear the results table
       document.getElementById("resultsBody").innerHTML = ""; // Clear results table
+      // Clear the best match section
+      document.getElementById("bestMatchResult").style.display = "none"; // Hide best match result
+      document.getElementById("bestMatchContent").textContent = ""; // Clear best match content
       // Hide the results table and download button
       document.getElementById("resultsTable").classList.add("d-none"); // Hide results table
       document.getElementById("downloadCSV").style.display = "none"; // Hide download button
-      alert("Job Description, Resumes, and Results cleared.");
+      alert("Job Description, Resumes, Best Match, and Results cleared.");
     }
     // Hide the clear data section after clearing
     toggleClearDataSection();

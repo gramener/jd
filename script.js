@@ -164,11 +164,12 @@ Output JSON:
 }
 // Helper function to safely calculate mandatory skills average
 function calculateMandatorySkillsAverage(skillsObj) {
-  if (!skillsObj || typeof skillsObj !== "object") return "N/A";
+  if (!skillsObj || typeof skillsObj !== "object") return 0;
 
-  const scores = Object.values(skillsObj).filter((score) => typeof score === "number");
+  // Extract scores from the skillsObj
+  const scores = Object.values(skillsObj).map(skill => skill.score).filter(score => typeof score === "number");
 
-  if (scores.length === 0) return "N/A";
+  if (scores.length === 0) return 0;
 
   return (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2);
 }
@@ -418,6 +419,17 @@ document.getElementById("analyseButton").addEventListener("click", async functio
         contentStr = contentStr.replace(/```json\n?/g, "").replace(/```\n?/g, "");
         const analysis = JSON.parse(contentStr.trim());
 
+        // Check the structure of the analysis object
+        console.log(analysis); // Debugging line to see the entire analysis object
+
+        // Ensure that the Mandatory Skills Score is being accessed correctly
+        const mandatorySkillsScore = analysis["Mandatory Skills Score (1/10)"];
+        console.log("Mandatory Skills Score:", mandatorySkillsScore); // Debugging line
+
+        // Calculate the average score for mandatory skills
+        const averageScore = calculateMandatorySkillsAverage(mandatorySkillsScore);
+        console.log("Calculated Mandatory Skills Score:", averageScore); // Debugging line
+
         // Add this after parsing the analysis
         finalRecommendations.push({
           name: analysis["Candidate Name"] || "N/A",
@@ -432,7 +444,7 @@ document.getElementById("analyseButton").addEventListener("click", async functio
             relevantExperience: analysis["Relevant Experience in years (w.r.t JD)"] || "N/A",
             overallExperience: analysis["Overall Exp in years"] || "N/A",
             overallFitScore: analysis["Overall Fit Score (1/10) (w.r.t JD)"]?.score || "N/A",
-            mandatorySkillsScore: calculateMandatorySkillsAverage(analysis["Mandatory Skills Score (1/10)"]),
+            mandatorySkillsScore: averageScore, // Use the calculated score
             domainKnowledge: analysis["Domain Knowledge (1 to 10) (w.r.t JD)"]?.score || "N/A",
             finalRecommendation: analysis["Final Recommendation"] || "N/A",
           },
@@ -523,4 +535,41 @@ document.getElementById("downloadCSV").addEventListener("click", function () {
   const csv = tableToCSV();
   const filename = "resume_analysis_results_" + new Date().toISOString().slice(0, 10) + ".csv";
   downloadCSV(csv, filename);
+});
+
+// Function to show the clear data section when a file is uploaded
+function toggleClearDataSection() {
+  const jdFile = document.getElementById('jdFile').files.length > 0;
+  const resumeFiles = document.getElementById('resumeFiles').files.length > 0;
+  const clearDataSection = document.getElementById('clearDataSection');
+
+  if (jdFile || resumeFiles) {
+    clearDataSection.style.display = 'block';
+  } else {
+    clearDataSection.style.display = 'none';
+  }
+}
+
+// Event listeners for file inputs
+document.getElementById('jdFile').addEventListener('change', toggleClearDataSection);
+document.getElementById('resumeFiles').addEventListener('change', toggleClearDataSection);
+
+// Clear Data Button Functionality
+document.getElementById("clearDataButton").addEventListener("click", function() {
+  const selectedOption = document.querySelector('input[name="clearData"]:checked');
+  if (selectedOption) {
+    if (selectedOption.value === 'jd') {
+      // Clear the job description input
+      document.getElementById('jdFile').value = '';
+      alert("Job Description cleared.");
+    } else if (selectedOption.value === 'cvs') {
+      // Clear the resumes input
+      document.getElementById('resumeFiles').value = '';
+      alert("Resumes cleared.");
+    }
+    // Hide the clear data section after clearing
+    toggleClearDataSection();
+  } else {
+    alert('Please select an option to clear.');
+  }
 });

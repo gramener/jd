@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -89,6 +88,24 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Add this section for clearing JD or CVs -->
+    <div class="mb-4" id="clearDataSection" style="display: none;">
+      <label class="form-label">Clear Data</label>
+      <div>
+        <input type="radio" id="clearJD" name="clearData" value="jd">
+        <label for="clearJD">Clear Job Description</label>
+      </div>
+      <div>
+        <input type="radio" id="clearCVs" name="clearData" value="cvs">
+        <label for="clearCVs">Clear Resumes</label>
+      </div>
+      <div>
+        <input type="radio" id="clearBoth" name="clearData" value="both">
+        <label for="clearBoth">Clear Both</label>
+      </div>
+      <button id="clearDataButton" class="btn btn-danger mt-2">Clear Selected Data</button>
     </div>
 
     <!-- Mandatory Skills Section -->

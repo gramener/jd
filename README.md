@@ -1,53 +1,116 @@
 # Resume Analyzer
 
-This project is a web-based application designed to analyze resumes against a job description using AI-powered analysis. It helps in evaluating candidate matches based on skills, experience, and other relevant criteria.
+An AI-powered tool to analyze resumes against job descriptions using multiple LLM models for accurate candidate matching.
 
-## Try It Out !
-[Live Demo](https://jd.straive.app/)
+## Overview
+
+This application uses LLMs to evaluate candidate resumes against job requirements, providing detailed scoring and recommendations for hiring decisions.
+
+It uses a structured workflow to analyze both job descriptions and resumes, extracting key information and providing comprehensive matching scores.
+
+Here's a breakdown of the workflow:
+
+1. **Job Description Analysis**: The LLM analyzes the job description to identify mandatory skills and requirements.
+2. **Resume Text Extraction**: The system processes uploaded resumes (PDF/DOCX) to extract structured text content.
+3. **Skills Evaluation**: Mandatory and optional skills are evaluated against each candidate's experience.
+4. **Multi-criteria Analysis**: Each resume is scored across multiple dimensions:
+   - Overall fit score
+   - Mandatory skills matching
+   - Domain knowledge
+   - Relevant experience
+5. **Best Match Selection**: A specialized LLM evaluation identifies the most suitable candidate based on all criteria.
+
+```mermaid
+flowchart TD
+    A[Upload Job Description] --> B[Extract Mandatory Skills]
+    A --> C[Upload Resumes]
+    B --> D[Skills Analysis]
+    C --> D
+    D --> E[Multi-criteria Evaluation]
+    E --> F[Best Match Selection]
+    E --> G[Results Export]
+```
 
 ## Features
 
-- **File Upload**: Upload job descriptions and resumes in DOCX or PDF format.
-- **AI Analysis**: Leverages AI to extract and match relevant information from resumes against job descriptions.
-- **Skill Evaluation**: Identifies mandatory and optional skills from the job description and evaluates resumes accordingly.
-- **Results Display**: Presents analysis results in a tabular format with options to download as CSV.
-- **Best Match Identification**: Provides a recommendation for the best candidate match based on the analysis.
+- Multi-format document support:
+  - PDF parsing with PDF.js
+  - DOCX parsing with Mammoth.js
+  - Plain text fallback
+- AI-powered analysis:
+  - Automatic skill extraction
+  - Experience evaluation
+  - Candidate scoring
+- Customizable evaluation:
+  - Adjustable skill weightages
+  - Optional skills support
+  - Additional instructions
+- Results management:
+  - Tabular results display
+  - CSV export functionality
+  - Best match recommendations
+- Dark mode support with auto/light/dark theme options
 
-## How It Works
+## Usage
 
-1. **Upload Job Description**: Users can upload a job description file. The application processes the file to extract mandatory skills using AI.
+1. Upload a job description file (PDF/DOCX)
+2. Review and customize extracted mandatory skills
+3. Add optional skills and additional instructions
+4. Upload candidate resumes (multiple files supported)
+5. Click "Analyse Resumes" to process candidates
+6. Review detailed results in the table
+7. Export results as CSV or get best match recommendation
 
-2. **Upload Resumes**: Users can upload multiple resume files. The application reads and analyzes each resume against the job description.
+## Setup
 
-3. **AI-Powered Analysis**: The application uses AI to compare resumes with the job description, evaluating skills, experience, and other criteria.
+### Prerequisites
 
-4. **Display Results**: The analysis results are displayed in a table, showing details like candidate name, contact information, experience, and fit scores.
+- Modern web browser with JavaScript enabled
+- Access to LLM Foundry API endpoints
 
-5. **Download Results**: Users can download the analysis results as a CSV file for further review.
+### Local Setup
 
-6. **Best Match**: The application identifies the best candidate match and provides a concise recommendation.
+1. Clone this repository:
 
-## Setup and Usage
+```bash
+git clone https://github.com/gramener/resumeanalyzer.git
+cd resumeanalyzer
+```
 
-1. **Clone the Repository**: Clone this repository to your local machine.
+2. Serve the files using any static web server. For example, using Python:
 
-2. **Start a Local Server**: Navigate to the project directory in your terminal and run `python -m http.server`. Then, open your web browser and go to `http://localhost:8000` to access the application interface.
+```bash
+python -m http.server
+```
 
-3. **Upload Files**: Use the file upload sections to upload a job description and resumes.
+3. Open `http://localhost:8000` in your web browser
 
-4. **Analyze Resumes**: Click the "Analyse Resumes" button to start the analysis process.
+## Technical Details
 
-5. **View Results**: Check the results table for detailed analysis and download the results as needed.
+### Architecture
 
-6. **Get Best Match**: Click the "Get Best Match" button to see the recommended candidate.
+- Frontend: Vanilla JavaScript with Bootstrap UI
+- Document Processing: PDF.js and Mammoth.js
+- LLM Integration: OpenAI GPT-4 through LLM Foundry API
+- Styling: Bootstrap 5.3.3 with dark mode support
 
-## Dependencies
+### Dependencies
 
-- **Mammoth.js**: Used for extracting text from DOCX files.
-- **PDF.js**: Used for extracting text from PDF files.
-- **Bootstrap**: For styling the application interface.
-- **Gramex UI**: For additional UI components and theme support.
+- [Bootstrap](https://www.npmjs.com/package/bootstrap) - UI framework and styling
+- [Bootstrap Icons](https://www.npmjs.com/package/bootstrap-icons) - Icon system
+- [Mammoth.js](https://www.npmjs.com/package/mammoth) - DOCX processing
+- [PDF.js](https://www.npmjs.com/package/pdfjs-dist) - PDF processing
+- [Gramex UI](https://www.npmjs.com/package/@gramex/ui) - Dark theme support
 
-## Acknowledgments
+### LLM Models
 
-- Designed and developed by Gramener.
+Uses OpenAI's GPT-4 models through LLM Foundry for:
+
+- Skill extraction from job descriptions
+- Resume analysis and scoring
+- Best match determination
+- Final recommendations
+
+## License
+
+[MIT](LICENSE)
